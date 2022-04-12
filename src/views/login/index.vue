@@ -1,17 +1,17 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+    <div>
+        <h1>login</h1>
+    </div>
 </template>
+
 <script lang="ts">
 import Vue from 'vue'
 
 export default Vue.extend({
-  name: 'App'
-})
 
+})
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 
 </style>
