@@ -8,11 +8,14 @@
     </el-breadcrumb>
     <el-dropdown>
       <span class="el-dropdown-link">
-        <el-avatar :size="40" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+        <el-avatar
+          :size="40"
+          :src="userInfo.portrait || require('@/assets/default-avatar.png')"
+        ></el-avatar>
       </span>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item>用户ID</el-dropdown-item>
-        <el-dropdown-item divided>退出</el-dropdown-item>
+        <el-dropdown-item>{{ userInfo.userName }}</el-dropdown-item>
+        <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -20,17 +23,56 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { getUserInfo } from '@/services/user'
 
 export default Vue.extend({
-
+  data() {
+    return {
+      userInfo: {}
+    }
+  },
+  name: 'AppHeader',
+  created() {
+    this.getUser()
+  },
+  methods: {
+    async getUser() {
+      const { data } = await getUserInfo()
+      this.userInfo = data.content
+    },
+    logout() {
+      this.$confirm('确定退出嘛?', '退出提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      })
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '退出成功!'
+          })
+          this.$store.commit('setUser', null)
+          this.$router.push({
+            name: 'login'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消退出'
+          })
+        })
+    }
+  }
 })
 </script>
 
 <style scoped lang="scss">
-.header{
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.header {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

@@ -33,7 +33,7 @@ import { Form } from 'element-ui'
 import { login } from '@/services/user'
 export default Vue.extend({
   name: 'LoginIndex',
-  data () {
+  data() {
     return {
       formLabelAlign: {
         phone: '18201288771',
@@ -50,26 +50,30 @@ export default Vue.extend({
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 10, message: '长度是 6 到 10个字符', trigger: 'blur' }
+          {
+            min: 6,
+            max: 10,
+            message: '长度是 6 到 10个字符',
+            trigger: 'blur'
+          }
         ]
       },
       loadFlag: false
     }
   },
   methods: {
-    async submitForm () {
+    async submitForm() {
       try {
         await (this.$refs.formLabelAlign as Form).validate()
         this.loadFlag = true
         const { data } = await login(this.formLabelAlign)
         if (data.state !== 1) {
-          this.loadFlag = false
-          return this.$message.error(data.message)
+          this.$message.error(data.message)
+        } else {
+          this.$store.commit('setUser', data.content)
+          this.$message.success('登录成功！')
+          this.$router.push((this.$route.query.redirect as string) || '/')
         }
-        this.$message.success('登录成功！')
-        this.$router.push({
-          name: 'home'
-        })
       } catch (e) {
         this.$message.error('登录失败！')
       }
